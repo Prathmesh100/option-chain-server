@@ -69,10 +69,10 @@ export const generateOptionChain = (
     const expiries = calculateExpiries();
     const optionChain: any[] = [];
 
-    // Generate strike prices as multiples of 5 around the spot price
-    const minStrike = Math.floor(spotPrice / 50) * 50 - 500; // Start 500 below the nearest multiple of 50
+    // Generate strike prices as multiples of 50 around the spot price
+    const minStrikeRange = Math.floor(spotPrice / 50) * 50 - 500; // Start 500 below the nearest multiple of 50
     const maxStrike = Math.ceil(spotPrice / 50) * 50 + 500; // End 500 above the nearest multiple of 50
-
+    const minStrike= minStrikeRange>0?minStrikeRange:0
     const strikePrices :number[]= [];
     for (let price = minStrike; price <= maxStrike; price += 500) {
         strikePrices.push(price);
