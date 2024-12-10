@@ -8,9 +8,11 @@ export const getOptionChain = async (req: Request, res: Response) => {
 
     try {
         // Mock API call to fetch spot price
-        const spotPriceResponse = await axios.get(`https://api.coinbase.com/v2/exchange-rates?currency=${market}`);
-        const spotPrice = parseFloat(spotPriceResponse.data?.data?.rates?.USD);
-
+        const spotPriceResponse = await axios.get(`https://api.binance.com/api/v3/ticker/24hr?symbol=${market}`);
+        // console.log(spotPriceResponse?.data)
+        const spotPrice = parseFloat(spotPriceResponse.data?.lastPrice); 
+        const priceChange=parseFloat(spotPriceResponse.data?.priceChange); 
+        const percentPriceChange = parseFloat(spotPriceResponse.data?.priceChangePercent);
         const optionChain = generateOptionChain(
             spotPrice,
             parseFloat(contractSize as string),
@@ -18,7 +20,7 @@ export const getOptionChain = async (req: Request, res: Response) => {
             parseFloat(volatility as string)
         );
 
-        res.json({ market, spotPrice, optionChain });
+        res.json({ market,priceChange,percentPriceChange, spotPrice, optionChain });
     } catch (error: any) {
         res.status(500).json({ error: error.message });
     }
@@ -30,8 +32,11 @@ export const getOptionChainHtml = async (req: Request, res: Response) => {
 
     try {
         // Mock API call to fetch spot price
-        const spotPriceResponse = await axios.get(`https://api.coinbase.com/v2/exchange-rates?currency=${market}`);
-        const spotPrice = parseFloat(spotPriceResponse.data?.data?.rates?.USD);
+        const spotPriceResponse = await axios.get(`https://api.binance.com/api/v3/ticker/24hr?symbol=${market}`);
+        // console.log(spotPriceResponse?.data)
+        const spotPrice = parseFloat(spotPriceResponse.data?.lastPrice); 
+        const priceChange=parseFloat(spotPriceResponse.data?.priceChange); 
+        const percentPriceChange = parseFloat(spotPriceResponse.data?.priceChangePercent);
 
         const optionChain = generateOptionChain(
             spotPrice,
@@ -89,7 +94,10 @@ export const getOptionChainHtml = async (req: Request, res: Response) => {
             </style>
         </head>
         <body>
-            <h1>Option Chain - ${market.toUpperCase()} = ${spotPrice}</h1>
+            <h1>Option Chain: ${market.toUpperCase()} = ${spotPrice}</h1>
+            <h1>Price Change: ${priceChange}</h1>
+            <h1>% Price Change: ${percentPriceChange}% </h1>
+
             <table>
                 <thead>
                     <tr>
